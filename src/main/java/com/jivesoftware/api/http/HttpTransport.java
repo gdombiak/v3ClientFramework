@@ -16,13 +16,26 @@ public interface HttpTransport {
 
     interface Request {
 
-        Method getMethod();
+        Request addBody(String body);
+
+        Request addHeader(String name, String value);
+
+        Request addMethod(Method method);
+
+        Request addQueryParam(String name, String value);
+
+        Request addUri(String uri);
+
+        String getBody();
 
         Iterable<NameValuePair> getHeaders();
 
+        Method getMethod();
+
         Iterable<NameValuePair> getQueryParams();
 
-        String getBody();
+        String getUri();
+
     }
 
     interface Response {
