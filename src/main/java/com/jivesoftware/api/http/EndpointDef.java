@@ -1,6 +1,7 @@
 package com.jivesoftware.api.http;
 
 import com.jivesoftware.api.NameValuePair;
+import com.jivesoftware.api.type.EntityType;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ public class EndpointDef {
     private final HttpTransport.Method method;
     private final String path;
     private final Set<String> queryParams;
+    private final EntityType<?> bodyType;
     private final Iterable<NameValuePair> overrides;
     private final boolean formatExtraParamsAsFilters;
 
@@ -22,13 +24,16 @@ public class EndpointDef {
      * @param path An absolute service path with optional tokens like "/api/core/v3/contents/{id}"
      * @param queryParams String with known query param names in a comma separated list
      * @param overrides Parameter overrides in effect for this endpoint
+     * @param bodyType Type of entity passed in body, or null if none
      */
     public EndpointDef(HttpTransport.Method method,
                        String path,
                        String queryParams,
+                       EntityType<?> bodyType,
                        Iterable<NameValuePair> overrides) {
         this.method = method;
         this.path = path;
+        this.bodyType = bodyType;
         this.overrides = overrides;
         this.formatExtraParamsAsFilters = queryParams.contains("filter");
         this.queryParams = new HashSet<String>(Arrays.asList(queryParams.split(",")));
@@ -49,6 +54,10 @@ public class EndpointDef {
     public Iterable<NameValuePair> getQueryParams(Iterable<NameValuePair> allParameters) {
         // exclude path params, convert filter params
         return null; // todo
+    }
+
+    public EntityType<?> getBodyType() {
+        return bodyType;
     }
 
     public String getPath(Iterable<NameValuePair> allParameters) {
