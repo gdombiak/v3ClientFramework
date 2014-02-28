@@ -62,7 +62,11 @@ public interface HttpTransport {
         <ENTITY> Entities<ENTITY> getEntities(EntityTypeLibrary<? extends ENTITY> typeLibrary) throws ErrorResponse;
 
         <ENTITY> ENTITY getBody(EntityTypeLibrary<? extends ENTITY> typeLibrary) throws ErrorResponse;
+
+        // For debugging
+        String getBodyAsString();
     }
 
-    Response execute(Request request);
+    Response execute(Request request) throws ErrorResponse;
+
 }
