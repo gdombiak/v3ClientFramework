@@ -1,6 +1,6 @@
-package com.jivesoftware.api.credentials;
+package com.jivesoftware.v3client.framework.credentials;
 
-import com.jivesoftware.api.NameValuePair;
+import com.jivesoftware.v3client.framework.NameValuePair;
 
 import java.util.Arrays;
 import java.util.Collection;

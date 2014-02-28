@@ -1,8 +1,8 @@
-package com.jivesoftware.api;
+package com.jivesoftware.v3client.framework;
 
-import com.jivesoftware.api.credentials.Credentials;
-import com.jivesoftware.api.http.EndpointDef;
-import com.jivesoftware.api.http.HttpTransport;
+import com.jivesoftware.v3client.framework.credentials.Credentials;
+import com.jivesoftware.v3client.framework.http.EndpointDef;
+import com.jivesoftware.v3client.framework.http.HttpTransport;
 
 import java.net.URL;
 

@@ -1,7 +1,7 @@
-package com.jivesoftware.api.credentials;
+package com.jivesoftware.v3client.framework.credentials;
 
-import com.jivesoftware.api.NameValuePair;
-import com.jivesoftware.api.http.HttpTransport;
+import com.jivesoftware.v3client.framework.NameValuePair;
+import com.jivesoftware.v3client.framework.http.HttpTransport;
 
 import java.net.URL;
 import java.util.Collection;

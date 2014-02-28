@@ -1,4 +1,4 @@
-package com.jivesoftware.api;
+package com.jivesoftware.v3client.framework;
 
 /**
  * Created by ed.venaglia on 2/27/14.

@@ -1,4 +1,4 @@
-package com.jivesoftware.api;
+package com.jivesoftware.v3client.framework;
 
 import java.util.ArrayList;
 import java.util.Collections;

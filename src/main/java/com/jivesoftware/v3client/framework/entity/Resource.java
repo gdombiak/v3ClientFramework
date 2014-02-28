@@ -1,6 +1,6 @@
-package com.jivesoftware.api.entity;
+package com.jivesoftware.v3client.framework.entity;
 
-import com.jivesoftware.api.http.HttpTransport;
+import com.jivesoftware.v3client.framework.http.HttpTransport;
 
 import java.net.URL;
 import java.util.List;

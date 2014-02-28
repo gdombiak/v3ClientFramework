@@ -1,9 +1,9 @@
-package com.jivesoftware.api.http;
+package com.jivesoftware.v3client.framework.http;
 
-import com.jivesoftware.api.ErrorResponse;
-import com.jivesoftware.api.entity.Entities;
-import com.jivesoftware.api.type.EntityTypeLibrary;
-import com.jivesoftware.api.NameValuePair;
+import com.jivesoftware.v3client.framework.ErrorResponse;
+import com.jivesoftware.v3client.framework.entity.Entities;
+import com.jivesoftware.v3client.framework.type.EntityTypeLibrary;
+import com.jivesoftware.v3client.framework.NameValuePair;
 
 /**
  * Created by ed.venaglia on 2/27/14.
@@ -11,7 +11,22 @@ import com.jivesoftware.api.NameValuePair;
 public interface HttpTransport {
 
     enum Method {
-        GET, PUT, POST, DELETE
+
+        GET("GET"),
+        PUT("PUT"),
+        POST("POST"),
+        DELETE("DELETE");
+
+        Method(String verb) {
+            this.verb = verb;
+        }
+
+        private String verb;
+
+        public String verb() {
+            return this.verb;
+        }
+
     }
 
     interface Request {

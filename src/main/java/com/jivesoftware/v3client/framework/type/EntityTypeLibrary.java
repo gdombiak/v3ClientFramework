@@ -1,4 +1,4 @@
-package com.jivesoftware.api.type;
+package com.jivesoftware.v3client.framework.type;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
-package com.jivesoftware.api.http;
+package com.jivesoftware.v3client.framework.http;
 
-import com.jivesoftware.api.NameValuePair;
-import com.jivesoftware.api.type.EntityType;
+import com.jivesoftware.v3client.framework.NameValuePair;
+import com.jivesoftware.v3client.framework.type.EntityType;
 
 import java.util.Arrays;
 import java.util.HashSet;

@@ -1,6 +1,6 @@
-package com.jivesoftware.api.entity;
+package com.jivesoftware.v3client.framework.entity;
 
-import com.jivesoftware.api.AbstractJiveClient;
+import com.jivesoftware.v3client.framework.AbstractJiveClient;
 
 import java.util.*;
 
