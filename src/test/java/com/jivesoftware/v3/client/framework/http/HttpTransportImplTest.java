@@ -31,7 +31,7 @@ public class HttpTransportImplTest {
     public void setupJiveClient() {
         httpTransport = new HttpTransportImpl();
         Credentials credentials = new TestCredentials();
-        jiveClient = new TestJiveClient(TEST_JIVE_URL, credentials);
+        jiveClient = new TestJiveClient(TEST_JIVE_URL, credentials, null);
     }
 
     @After
@@ -81,8 +81,8 @@ public class HttpTransportImplTest {
     }
 
     class TestJiveClient extends AbstractJiveClient {
-        TestJiveClient(String jiveURL, Credentials credentials) {
-            super(jiveURL, credentials);
+        TestJiveClient(String jiveURL, Credentials credentials, HttpTransport transport) {
+            super(jiveURL, credentials, transport);
         }
     }
 
