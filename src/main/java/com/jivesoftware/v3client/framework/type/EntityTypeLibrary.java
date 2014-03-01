@@ -21,6 +21,16 @@ public interface EntityTypeLibrary<BASE> {
         protected final Map<String,EntityType<?>> library = new HashMap<String,EntityType<?>>();
         protected final ReadWriteLock lock = new ReentrantReadWriteLock();
 
+        // For testing only
+        public void clear() {
+            lock.writeLock().lock();
+            try {
+                library.clear();
+            } finally {
+                lock.writeLock().unlock();
+            }
+        }
+
         {
             add(new EntityType<>(Void.TYPE, "void", "void"));
         }
@@ -47,7 +57,7 @@ public interface EntityTypeLibrary<BASE> {
                 @Override
                 public EntityType<? extends SUB> lookupByType(String type) {
                     EntityType result = lookupImpl(type);
-                    return result != null && filter.isAssignableFrom(result.getClass()) ? result : null;
+                    return result != null && filter.isAssignableFrom(result.getType()) ? result : null;
                 }
 
                 @Override
