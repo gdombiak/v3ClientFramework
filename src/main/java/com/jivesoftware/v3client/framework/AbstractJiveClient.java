@@ -16,14 +16,16 @@ public abstract class AbstractJiveClient {
 
     public static final ThreadLocal<AbstractJiveClient> JIVE_CLIENT = new ThreadLocal<>();
 
-    protected AbstractJiveClient(String jiveURL, Credentials credentials) {
+    protected AbstractJiveClient(String jiveURL, Credentials credentials, HttpTransport transport) {
         this.jiveURL = jiveURL;
         this.credentials = credentials;
+        this.transport = transport;
         this.httpCredentials = extractCredentials();
     }
 
     private final Credentials credentials;
     private final Header httpCredentials;
+    protected final HttpTransport transport;
     protected final String jiveURL;
 
     /**
