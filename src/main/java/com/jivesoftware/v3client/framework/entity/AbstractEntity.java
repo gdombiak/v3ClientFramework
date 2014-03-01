@@ -14,6 +14,9 @@ public abstract class AbstractEntity {
     protected Map<String,Resource<?>> resources;
 
     protected AbstractEntity(AbstractJiveClient jiveClient, String type) {
+        if (jiveClient == null) {
+            throw new NullPointerException("jiveClient");
+        }
         this.jiveClient = jiveClient;
         this.type = type;
     }

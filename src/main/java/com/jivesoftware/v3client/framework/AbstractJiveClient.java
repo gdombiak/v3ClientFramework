@@ -14,6 +14,8 @@ import org.apache.http.impl.auth.BasicScheme;
  */
 public abstract class AbstractJiveClient {
 
+    public static final ThreadLocal<AbstractJiveClient> JIVE_CLIENT = new ThreadLocal<>();
+
     protected AbstractJiveClient(String jiveURL, Credentials credentials) {
         this.jiveURL = jiveURL;
         this.credentials = credentials;
