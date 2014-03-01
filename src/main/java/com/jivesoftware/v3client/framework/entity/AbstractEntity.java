@@ -13,8 +13,9 @@ public abstract class AbstractEntity {
     protected final AbstractJiveClient jiveClient;
     protected Map<String,Resource<?>> resources;
 
-    protected AbstractEntity(AbstractJiveClient jiveClient) {
+    protected AbstractEntity(AbstractJiveClient jiveClient, String type) {
         this.jiveClient = jiveClient;
+        this.type = type;
     }
 
 /* TODO - add copy constructor later if needed, will need to be overridden in generated classes

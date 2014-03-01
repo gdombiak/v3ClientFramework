@@ -7,8 +7,8 @@ import com.jivesoftware.v3client.framework.AbstractJiveClient;
  */
 public abstract class PlaceEntity extends AbstractEntity {
 
-    public PlaceEntity(AbstractJiveClient abstractJiveClient) {
-        super(abstractJiveClient);
+    public PlaceEntity(AbstractJiveClient abstractJiveClient, String type) {
+        super(abstractJiveClient, type);
     }
 
 }

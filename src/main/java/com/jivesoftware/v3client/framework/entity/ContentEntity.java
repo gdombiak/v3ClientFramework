@@ -7,8 +7,8 @@ import com.jivesoftware.v3client.framework.AbstractJiveClient;
  */
 public abstract class ContentEntity extends AbstractEntity {
 
-    public ContentEntity(AbstractJiveClient abstractJiveClient) {
-        super(abstractJiveClient);
+    public ContentEntity(AbstractJiveClient abstractJiveClient, String type) {
+        super(abstractJiveClient, type);
     }
 
 }
