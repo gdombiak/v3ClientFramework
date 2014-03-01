@@ -1,5 +1,8 @@
 package com.jivesoftware.v3client.framework;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;

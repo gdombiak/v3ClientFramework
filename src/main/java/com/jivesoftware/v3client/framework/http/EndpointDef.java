@@ -3,6 +3,8 @@ package com.jivesoftware.v3client.framework.http;
 import com.jivesoftware.v3client.framework.NameValuePair;
 import com.jivesoftware.v3client.framework.type.EntityType;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +16,7 @@ public class EndpointDef {
 
     private final HttpTransport.Method method;
     private final String path;
+    private final Set<String> pathParams;
     private final Set<String> queryParams;
     private final EntityType<?> bodyType;
     private final Iterable<NameValuePair> overrides;
@@ -35,12 +38,23 @@ public class EndpointDef {
         this.path = path;
         this.bodyType = bodyType;
         this.overrides = overrides;
-        this.formatExtraParamsAsFilters = queryParams.contains("filter");
-        this.queryParams = new HashSet<String>(Arrays.asList(queryParams.split(",")));
+        this.formatExtraParamsAsFilters = (queryParams != null) ? queryParams.contains("filter") : false;
+        this.pathParams = extractPathParams(path);
+        this.queryParams = (queryParams != null) ? new HashSet<String>(Arrays.asList(queryParams.split(","))) : new HashSet<String>();
         if (this.formatExtraParamsAsFilters) {
             this.queryParams.remove("filter");
         }
-        // todo parse path for tokens, save path params
+    }
+
+    private Set<String> extractPathParams(String path) {
+        Set<String> pathParams = new HashSet<>();
+        String[] segments = path.split("/");
+        for (String segment : segments) {
+            if (segment.startsWith("{") && segment.endsWith("}")) {
+                pathParams.add(segment.substring(1, segment.length() - 1));
+            }
+        }
+        return pathParams;
     }
 
     public Iterable<NameValuePair> resolveOverrides(Object thisEntity, Object bodyEntity) {
@@ -52,8 +66,19 @@ public class EndpointDef {
     }
 
     public Iterable<NameValuePair> getQueryParams(Iterable<NameValuePair> allParameters) {
-        // exclude path params, convert filter params
-        return null; // todo
+        NameValuePair.Builder queryParams = NameValuePair.many();
+        for (NameValuePair pair : allParameters) {
+            if (!this.queryParams.contains(pair.getName())) {
+                continue;
+            }
+            try {
+                queryParams.add(pair.getName(), URLEncoder.encode(pair.getValue(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                // Can not happen
+            }
+        }
+        // TODO - convert filter params ???
+        return queryParams;
     }
 
     public EntityType<?> getBodyType() {
@@ -61,7 +86,18 @@ public class EndpointDef {
     }
 
     public String getPath(Iterable<NameValuePair> allParameters) {
-        // replace tokens in path
-        return path; // todo
+        String path = this.path;
+        for (NameValuePair pair : allParameters) {
+            if (!this.pathParams.contains(pair.getName())) {
+                continue;
+            }
+            String key = '{' + pair.getName() + '}';
+            try {
+                path = path.replace(key, URLEncoder.encode(pair.getValue(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                // Can not happen
+            }
+        }
+        return path;
     }
 }
