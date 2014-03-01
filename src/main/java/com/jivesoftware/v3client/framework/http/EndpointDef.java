@@ -2,6 +2,7 @@ package com.jivesoftware.v3client.framework.http;
 
 import com.jivesoftware.v3client.framework.NameValuePair;
 import com.jivesoftware.v3client.framework.type.EntityType;
+import com.jivesoftware.v3client.framework.type.EntityTypeLibrary;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -18,7 +19,9 @@ public class EndpointDef {
     private final String path;
     private final Set<String> pathParams;
     private final Set<String> queryParams;
-    private final EntityType<?> bodyType;
+    private final String bodyTypeName;
+    private EntityType<?> bodyType;
+    private boolean bodyTypeResolved;
     private final Iterable<NameValuePair> overrides;
     private final boolean formatExtraParamsAsFilters;
 
@@ -27,16 +30,17 @@ public class EndpointDef {
      * @param path An absolute service path with optional tokens like "/api/core/v3/contents/{id}"
      * @param queryParams String with known query param names in a comma separated list
      * @param overrides Parameter overrides in effect for this endpoint
-     * @param bodyType Type of entity passed in body, or null if none
+     * @param bodyTypeName Type name of entity passed in body, or null if none
      */
     public EndpointDef(HttpTransport.Method method,
                        String path,
                        String[] queryParams,
-                       EntityType<?> bodyType,
+                       String bodyTypeName,
                        Iterable<NameValuePair> overrides) {
         this.method = method;
         this.path = path;
-        this.bodyType = bodyType;
+        this.bodyTypeName = bodyTypeName;
+        this.bodyTypeResolved = bodyTypeName != null && !bodyTypeName.equals("void");
         this.overrides = overrides;
         this.pathParams = extractPathParams(path);
         this.queryParams = (queryParams != null) ? new HashSet<>(Arrays.asList(queryParams)) : new HashSet<String>();
@@ -82,6 +86,10 @@ public class EndpointDef {
     }
 
     public EntityType<?> getBodyType() {
+        if (!bodyTypeResolved) {
+            bodyType = EntityTypeLibrary.ROOT.lookupByType(bodyTypeName);
+            bodyTypeResolved = true;
+        }
         return bodyType;
     }
 

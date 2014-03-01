@@ -21,6 +21,10 @@ public interface EntityTypeLibrary<BASE> {
         protected final Map<String,EntityType<?>> library = new HashMap<String,EntityType<?>>();
         protected final ReadWriteLock lock = new ReentrantReadWriteLock();
 
+        {
+            add(new EntityType<>(Void.TYPE, "void", "void"));
+        }
+
         @Override
         public EntityType<?> lookupByType(String type) {
             return lookupImpl(type);
