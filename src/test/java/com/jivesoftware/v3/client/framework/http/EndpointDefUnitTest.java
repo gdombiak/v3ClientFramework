@@ -69,9 +69,11 @@ public class EndpointDefUnitTest {
     }
 
     private EndpointDef getPersonDef() {
+        String[] queryParams = new String[1];
+        queryParams[0] = "fields";
         EndpointDef endpointDef = new EndpointDef(HttpTransport.Method.GET,
                 "/api/core/v3/people/{personID}",
-                "fields",
+                queryParams,
                 null, // TODO - should be PersonEntityType
                 null);
         return endpointDef;

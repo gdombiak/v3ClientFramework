@@ -55,9 +55,11 @@ public class HttpTransportImplTest {
 
 
     private EndpointDef getMeDef() {
+        String[] queryParams = new String[1];
+        queryParams[0] = "fields";
         EndpointDef endpointDef = new EndpointDef(HttpTransport.Method.GET,
                 "/api/core/v3/people/{personID}",
-                "fields",
+                queryParams,
                 null,
                 null);
         return endpointDef;
