@@ -90,6 +90,10 @@ public abstract class AbstractJiveClient {
         return transport.execute(request);
     }
 
+    protected static String[] queryParams(String... params) {
+        return params;
+    }
+
     protected void optionalParam(NameValuePair.Builder builder, String name, Object value) {
         if (value == null || "".equals(value)) return;
         if (value instanceof AbstractEntity) value = ((AbstractEntity)value).getId();

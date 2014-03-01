@@ -59,7 +59,7 @@ public interface HttpTransport {
 
         Iterable<NameValuePair> getHeaders();
 
-        <ENTITY> Entities<ENTITY> getEntities(EntityTypeLibrary<? extends ENTITY> typeLibrary) throws ErrorResponse;
+        <ENTITY> Iterable<ENTITY> getEntities(EntityTypeLibrary<? extends ENTITY> typeLibrary) throws ErrorResponse;
 
         <ENTITY> ENTITY getBody(EntityTypeLibrary<? extends ENTITY> typeLibrary) throws ErrorResponse;
 
