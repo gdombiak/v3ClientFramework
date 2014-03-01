@@ -27,6 +27,7 @@ public class HttpTransportImpl implements HttpTransport {
         CloseableHttpResponse httpResponse = null;
         try {
             httpResponse = httpClient.execute(httpRequest);
+            return new HttpResponseImpl(httpResponse);
         } catch (IOException e) {
             throw new ErrorResponse(e.getMessage(), e, httpResponse.getStatusLine().getStatusCode());
         } finally {
@@ -37,11 +38,6 @@ public class HttpTransportImpl implements HttpTransport {
                     // Oh well, we tried
                 }
             }
-        }
-        try {
-            return new HttpResponseImpl(httpResponse);
-        } catch (IOException e) {
-            throw new ErrorResponse(e.getMessage(), e, httpResponse.getStatusLine().getStatusCode());
         }
     }
 

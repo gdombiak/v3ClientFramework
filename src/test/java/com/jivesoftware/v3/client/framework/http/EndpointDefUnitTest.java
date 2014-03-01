@@ -14,7 +14,7 @@ public class EndpointDefUnitTest {
 
     @Test
     public void testDeleteFollowing() throws Exception {
-        EndpointDef endpointDef = deleteFollowing();
+        EndpointDef endpointDef = deleteFollowingDef();
         assertEquals(null, endpointDef.getBodyType());
         assertEquals(HttpTransport.Method.DELETE, endpointDef.getMethod());
         NameValuePair.Builder pathParameters = NameValuePair.many()
@@ -59,7 +59,7 @@ public class EndpointDefUnitTest {
         return outputs;
     }
 
-    private EndpointDef deleteFollowing() {
+    private EndpointDef deleteFollowingDef() {
         EndpointDef endpointDef = new EndpointDef(HttpTransport.Method.DELETE,
                 "/api/core/v3/people/{personID}/@following/{followedPersonID}",
                 null,

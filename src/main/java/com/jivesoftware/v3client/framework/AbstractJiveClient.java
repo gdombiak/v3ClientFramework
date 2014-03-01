@@ -30,7 +30,7 @@ public abstract class AbstractJiveClient {
      * @param entity The entity to send in the body of the request, or null if there is no body
      * @return The request object
      */
-    protected HttpTransport.Request buildRequest(EndpointDef endpointDef,
+    public HttpTransport.Request buildRequest(EndpointDef endpointDef,
                                                  Iterable<NameValuePair> parameters,
                                                  Object entity) {
         HttpTransport.Request request = (new HttpRequestImpl())
