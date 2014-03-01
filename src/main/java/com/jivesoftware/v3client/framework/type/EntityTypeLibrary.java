@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public interface EntityTypeLibrary<BASE> {
 
-    EntityTypeLibrary<Object> ROOT = new RootEntityTypeLibrary();
+    RootEntityTypeLibrary ROOT = new RootEntityTypeLibrary();
 
     EntityType<? extends BASE> lookupByType(String type);
 

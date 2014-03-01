@@ -31,16 +31,16 @@ public class EndpointDef {
      */
     public EndpointDef(HttpTransport.Method method,
                        String path,
-                       String queryParams,
+                       String[] queryParams,
                        EntityType<?> bodyType,
                        Iterable<NameValuePair> overrides) {
         this.method = method;
         this.path = path;
         this.bodyType = bodyType;
         this.overrides = overrides;
-        this.formatExtraParamsAsFilters = (queryParams != null) ? queryParams.contains("filter") : false;
         this.pathParams = extractPathParams(path);
-        this.queryParams = (queryParams != null) ? new HashSet<String>(Arrays.asList(queryParams.split(","))) : new HashSet<String>();
+        this.queryParams = (queryParams != null) ? new HashSet<>(Arrays.asList(queryParams)) : new HashSet<String>();
+        this.formatExtraParamsAsFilters = this.queryParams.contains("filter");
         if (this.formatExtraParamsAsFilters) {
             this.queryParams.remove("filter");
         }
