@@ -36,8 +36,6 @@ public abstract class AbstractEntity {
         return null; // todo
     }
 
-    protected abstract EntityType<?> lookupResourceType(String resourceName);
-
     // All Core API entities have the following fields available
 
     protected String id;

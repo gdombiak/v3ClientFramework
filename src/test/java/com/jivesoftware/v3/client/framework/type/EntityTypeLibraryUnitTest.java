@@ -74,22 +74,12 @@ public class EntityTypeLibraryUnitTest {
             super(jiveClient, "bar");
         }
 
-        @Override
-        protected EntityType<?> lookupResourceType(String resourceName) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
     }
 
     class BazEntity extends ContentEntity {
 
         BazEntity(AbstractJiveClient jiveClient) {
             super(jiveClient, "baz");
-        }
-
-        @Override
-        protected EntityType<?> lookupResourceType(String resourceName) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
 
     }
@@ -100,11 +90,6 @@ public class EntityTypeLibraryUnitTest {
             super(jiveClient, "bop");
         }
 
-        @Override
-        protected EntityType<?> lookupResourceType(String resourceName) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
     }
 
     class FooEntity extends AbstractEntity {
@@ -113,10 +98,6 @@ public class EntityTypeLibraryUnitTest {
             super(jiveClient, "foo");
         }
 
-        @Override
-        protected EntityType<?> lookupResourceType(String resourceName) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
-        }
     }
 
 }
