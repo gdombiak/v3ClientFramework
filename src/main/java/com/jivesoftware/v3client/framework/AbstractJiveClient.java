@@ -1,6 +1,7 @@
 package com.jivesoftware.v3client.framework;
 
 import com.jivesoftware.v3client.framework.credentials.Credentials;
+import com.jivesoftware.v3client.framework.entity.AbstractEntity;
 import com.jivesoftware.v3client.framework.http.EndpointDef;
 import com.jivesoftware.v3client.framework.http.HttpRequestImpl;
 import com.jivesoftware.v3client.framework.http.HttpTransport;
@@ -85,4 +86,20 @@ public abstract class AbstractJiveClient {
         return uri;
     }
 
+    public HttpTransport.Response executeImpl(HttpTransport.Request request) {
+        return transport.execute(request);
+    }
+
+    protected void optionalParam(NameValuePair.Builder builder, String name, Object value) {
+        if (value == null || "".equals(value)) return;
+        if (value instanceof AbstractEntity) value = ((AbstractEntity)value).getId();
+        if (value != null) {
+            builder.add(name, String.valueOf(value));
+        }
+    }
+
+    protected void optionalParam(NameValuePair.Builder builder, Iterable<NameValuePair> merge) {
+        if (merge == null) return;
+        builder.add(merge);
+    }
 }

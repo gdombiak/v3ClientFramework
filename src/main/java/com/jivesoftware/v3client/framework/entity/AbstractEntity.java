@@ -1,7 +1,9 @@
 package com.jivesoftware.v3client.framework.entity;
 
 import com.jivesoftware.v3client.framework.AbstractJiveClient;
-import com.jivesoftware.v3client.framework.type.EntityType;
+import com.jivesoftware.v3client.framework.NameValuePair;
+import com.jivesoftware.v3client.framework.http.EndpointDef;
+import com.jivesoftware.v3client.framework.http.HttpTransport;
 
 import java.util.Map;
 
@@ -67,4 +69,26 @@ public abstract class AbstractEntity {
         this.type = type;
     }
 
+    protected HttpTransport.Request buildRequest(EndpointDef endpointDef,
+                                                 Iterable<NameValuePair> parameters,
+                                                 Object entity) {
+        return jiveClient.buildRequest(endpointDef, parameters, entity);
+    }
+
+    protected HttpTransport.Response executeImpl(HttpTransport.Request request) {
+        return jiveClient.executeImpl(request);
+    }
+
+    protected void optionalParam(NameValuePair.Builder builder, String name, Object value) {
+        if (value == null || "".equals(value)) return;
+        if (value instanceof AbstractEntity) value = ((AbstractEntity)value).getId();
+        if (value != null) {
+            builder.add(name, String.valueOf(value));
+        }
+    }
+
+    protected void optionalParam(NameValuePair.Builder builder, Iterable<NameValuePair> merge) {
+        if (merge == null) return;
+        builder.add(merge);
+    }
 }

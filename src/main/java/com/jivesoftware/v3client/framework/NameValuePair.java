@@ -1,8 +1,5 @@
 package com.jivesoftware.v3client.framework;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -39,7 +36,6 @@ public class NameValuePair {
 
     public interface Builder extends Iterable<NameValuePair> {
         Builder add(String name, String value);
-        Builder opt(String name, String value);
         Builder add(Iterable<NameValuePair> merge);
     }
 
@@ -56,12 +52,6 @@ public class NameValuePair {
             @Override
             public Builder add(String name, String value) {
                 list.add(new NameValuePair(name, value));
-                return this;
-            }
-
-            @Override
-            public Builder opt(String name, String value) {
-                if (value != null) add(name, value);
                 return this;
             }
 
