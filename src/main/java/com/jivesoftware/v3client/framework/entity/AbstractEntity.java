@@ -41,7 +41,6 @@ public abstract class AbstractEntity {
     // All Core API entities have the following fields available
 
     protected String id;
-    protected Map<String, ResourceEntity> resourceEntities;
     protected String type;
 
     public String getId() {
@@ -52,15 +51,6 @@ public abstract class AbstractEntity {
         this.id = id;
     }
 
-    public Map<String, ResourceEntity> getResources() {
-        return this.resourceEntities;
-    }
-
-    public void setResources(Map<String, ResourceEntity> resources) {
-        this.resourceEntities = resources;
-        // todo, also convert to Map<String,Resource<?>>
-    }
-
     public String getType() {
         return type;
     }
@@ -69,7 +59,16 @@ public abstract class AbstractEntity {
         this.type = type;
     }
 
+    protected String resourceRef(HttpTransport.Method method, String name) {
+        Resource<?> resource = resources.get(name);
+        if (resource != null && resource.can(method)) {
+            return resource.getRef();
+        }
+        throw new UnsupportedOperationException();
+    }
+
     protected HttpTransport.Request buildRequest(EndpointDef endpointDef,
+                                                 String ref,
                                                  Iterable<NameValuePair> parameters,
                                                  Object entity) {
         return jiveClient.buildRequest(endpointDef, parameters, entity);

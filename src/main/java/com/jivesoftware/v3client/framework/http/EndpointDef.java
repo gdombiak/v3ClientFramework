@@ -5,10 +5,10 @@ import com.jivesoftware.v3client.framework.type.EntityType;
 import com.jivesoftware.v3client.framework.type.EntityTypeLibrary;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by ed.venaglia on 2/27/14.
@@ -43,15 +43,54 @@ public class EndpointDef {
         this.bodyTypeResolved = bodyTypeName != null && !bodyTypeName.equals("void");
         this.overrides = overrides;
         this.pathParams = extractPathParams(path);
-        this.queryParams = (queryParams != null) ? new HashSet<>(Arrays.asList(queryParams)) : new HashSet<String>();
+        this.queryParams = (queryParams != null) ? new LinkedHashSet<>(Arrays.asList(queryParams)) : new LinkedHashSet<String>();
         this.formatExtraParamsAsFilters = this.queryParams.contains("filter");
         if (this.formatExtraParamsAsFilters) {
             this.queryParams.remove("filter");
         }
     }
 
+    /**
+     * Builds an EndpointDef for performing simple gets, where query params are implicitly overridden from a URI
+     * @param uri The URL to invoke
+     */
+    public EndpointDef(URI uri) {
+        this.method = HttpTransport.Method.GET;
+        this.path = uri.getPath();
+        this.bodyTypeName = null;
+        this.bodyTypeResolved = true;
+        this.pathParams = Collections.emptySet();
+        if (uri.getRawQuery() == null) {
+            this.overrides = Collections.emptySet();
+            this.queryParams = Collections.emptySet();
+        } else {
+            NameValuePair.Builder overrides = NameValuePair.many();
+            this.overrides = overrides;
+            this.queryParams = new LinkedHashSet<>();
+            for (String param : uri.getRawQuery().split("&")) {
+                String[] split = param.split("=", 2);
+                String name = decode(split[0]);
+                String value = decode(split[1]);
+                overrides.add(name, value);
+                queryParams.add(name);
+            }
+        }
+        this.formatExtraParamsAsFilters = this.queryParams.contains("filter");
+        if (this.formatExtraParamsAsFilters) {
+            this.queryParams.remove("filter");
+        }
+    }
+
+    private String decode(String s) {
+        try {
+            return URLDecoder.decode(s, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Set<String> extractPathParams(String path) {
-        Set<String> pathParams = new HashSet<>();
+        Set<String> pathParams = new LinkedHashSet<>();
         String[] segments = path.split("/");
         for (String segment : segments) {
             if (segment.startsWith("{") && segment.endsWith("}")) {

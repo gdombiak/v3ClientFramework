@@ -14,12 +14,20 @@ public class Resource<ENTITY> {
     private String ref;
     private List<String> allowed;
 
-    public void setRef(String ref) {
-        this.ref = ref;
+    public List<String> getAllowed() {
+        return allowed;
     }
 
     public void setAllowed(List<String> allowed) {
         this.allowed = allowed;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 
     public String name() {

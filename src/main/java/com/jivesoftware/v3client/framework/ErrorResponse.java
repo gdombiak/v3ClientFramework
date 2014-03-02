@@ -6,6 +6,7 @@ package com.jivesoftware.v3client.framework;
 public class ErrorResponse extends RuntimeException {
 
     private int status;
+    private String code;
     private Iterable<NameValuePair> headers;
 
     public ErrorResponse(String message, int status) {
@@ -34,6 +35,15 @@ public class ErrorResponse extends RuntimeException {
 
     public int getStatus() {
         return status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public ErrorResponse setCode(String code) {
+        this.code = code;
+        return this;
     }
 
     public Iterable<NameValuePair> getHeaders() {

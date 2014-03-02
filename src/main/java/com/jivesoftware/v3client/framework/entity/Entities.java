@@ -1,7 +1,12 @@
 package com.jivesoftware.v3client.framework.entity;
 
 import com.jivesoftware.v3client.framework.AbstractJiveClient;
+import com.jivesoftware.v3client.framework.NameValuePair;
+import com.jivesoftware.v3client.framework.http.EndpointDef;
+import com.jivesoftware.v3client.framework.http.HttpTransport;
+import com.jivesoftware.v3client.framework.type.EntityTypeLibrary;
 
+import java.net.URI;
 import java.util.*;
 
 /**
@@ -10,6 +15,7 @@ import java.util.*;
 public class Entities<TYPE> implements Iterable<TYPE> {
 
     private final AbstractJiveClient jiveClient;
+    private final EntityTypeLibrary<? extends TYPE> typeLibrary;
 
     private Boolean filtered;
     private Integer itemsPerPage;
@@ -22,12 +28,19 @@ public class Entities<TYPE> implements Iterable<TYPE> {
     private Integer unread;
     private Boolean updatedSince;
 
-    public Entities(AbstractJiveClient jiveClient) {
+    public Entities(AbstractJiveClient jiveClient, EntityTypeLibrary<? extends TYPE> typeLibrary) {
+        if (jiveClient == null) {
+            throw new NullPointerException("jiveClient");
+        }
+        if (typeLibrary == null) {
+            throw new NullPointerException("typeLibrary");
+        }
         this.jiveClient = jiveClient;
+        this.typeLibrary = typeLibrary;
     }
 
-    public void setList(Object jsonArray) {
-        // todo
+    public void load(List<TYPE> objects) {
+        this.list = objects;
     }
 
     public Boolean getFiltered() {
@@ -116,11 +129,27 @@ public class Entities<TYPE> implements Iterable<TYPE> {
     }
 
     public Entities<TYPE> next() throws NoSuchElementException {
-        return null; // todo
+        String link = links == null ? null : links.getNext();
+        if (link == null) {
+            throw new NoSuchElementException();
+        }
+        HttpTransport.Request request = jiveClient.buildRequest(new EndpointDef(URI.create(link)),
+                                                                NameValuePair.EMPTY,
+                                                                null);
+        Iterable<TYPE> entities = jiveClient.executeImpl(request).getEntities(typeLibrary);
+        return (Entities<TYPE>)entities;
     }
 
     public Entities<TYPE> previous() throws NoSuchElementException {
-        return null; // todo
+        String link = links == null ? null : links.getPrevious();
+        if (link == null) {
+            throw new NoSuchElementException();
+        }
+        HttpTransport.Request request = jiveClient.buildRequest(new EndpointDef(URI.create(link)),
+                                                                NameValuePair.EMPTY,
+                                                                null);
+        Iterable<TYPE> entities = jiveClient.executeImpl(request).getEntities(typeLibrary);
+        return (Entities<TYPE>)entities;
     }
 
     public void setLinks(Links links) {

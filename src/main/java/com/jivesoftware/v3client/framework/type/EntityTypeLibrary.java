@@ -14,6 +14,12 @@ public interface EntityTypeLibrary<BASE> {
 
     EntityType<? extends BASE> lookupByType(String type);
 
+    boolean isPossible(Class<?> type);
+
+    BASE cast(Object o) throws ClassCastException;
+
+    Class<BASE> getSuperType();
+
     <SUB extends BASE> EntityTypeLibrary<SUB> subLibrary(final Class<SUB> filter);
 
     public static class RootEntityTypeLibrary implements EntityTypeLibrary<Object> {
@@ -50,9 +56,23 @@ public interface EntityTypeLibrary<BASE> {
         }
 
         @Override
+        public boolean isPossible(Class<?> type) {
+            return true;
+        }
+
+        @Override
+        public Object cast(Object o) {
+            return o;
+        }
+
+        @Override
+        public Class<Object> getSuperType() {
+            return Object.class;
+        }
+
+        @Override
         public <SUB> EntityTypeLibrary<SUB> subLibrary(final Class<SUB> filter) {
             return new EntityTypeLibrary<SUB>() {
-
                 @SuppressWarnings("unchecked")
                 @Override
                 public EntityType<? extends SUB> lookupByType(String type) {
@@ -62,7 +82,22 @@ public interface EntityTypeLibrary<BASE> {
 
                 @Override
                 public <SUB1 extends SUB> EntityTypeLibrary<SUB1> subLibrary(Class<SUB1> filter) {
-                    return null;
+                    return ROOT.subLibrary(filter);
+                }
+
+                @Override
+                public boolean isPossible(Class<?> type) {
+                    return filter.isAssignableFrom(type);
+                }
+
+                @Override
+                public SUB cast(Object o) throws ClassCastException {
+                    return filter.cast(o);
+                }
+
+                @Override
+                public Class<SUB> getSuperType() {
+                    return filter;
                 }
             };
         }

@@ -59,9 +59,11 @@ public interface HttpTransport {
 
         Iterable<NameValuePair> getHeaders();
 
-        <ENTITY> Iterable<ENTITY> getEntities(EntityTypeLibrary<? extends ENTITY> typeLibrary) throws ErrorResponse;
+        <ENTITY> Iterable<ENTITY> getEntities(EntityTypeLibrary<? extends ENTITY> typeLibrary)
+                throws ErrorResponse, ClassCastException;
 
-        <ENTITY> ENTITY getBody(EntityTypeLibrary<? extends ENTITY> typeLibrary) throws ErrorResponse;
+        <ENTITY> ENTITY getBody(EntityTypeLibrary<? extends ENTITY> typeLibrary)
+                throws ErrorResponse, ClassCastException;
 
         // For debugging
         String getBodyAsString();
