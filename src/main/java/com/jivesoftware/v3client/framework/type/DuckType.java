@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class DuckType {
 
-    private static final Pattern MATCH_THROWS = Pattern.compile("^throws\b.*?;");
+    private static final Pattern MATCH_THROWS = Pattern.compile("^throw\\s.*?;");
 
     public enum QuacksLike {
         ERROR, // error response, call getObject() for the error object
