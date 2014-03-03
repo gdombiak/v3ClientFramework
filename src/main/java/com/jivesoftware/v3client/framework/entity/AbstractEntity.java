@@ -59,6 +59,10 @@ public abstract class AbstractEntity {
         this.type = type;
     }
 
+    public Resource<?> getResource(String name) {
+        return resources.get(name);
+    }
+
     protected String resourceRef(HttpTransport.Method method, String name) {
         Resource<?> resource = resources.get(name);
         if (resource != null && resource.can(method)) {
