@@ -5,8 +5,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.PropertyAccessorFactory;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -65,10 +67,17 @@ public class DataWriter {
     }
 
     public void writeDataBean(Object bean, JSONObject buffer) {
-        BeanWrapper wrapper = new BeanWrapperImpl(bean);
+        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(bean);
         for (PropertyDescriptor prop : wrapper.getPropertyDescriptors()) {
             String name = prop.getName();
-            Object value = toJsonValue(prop.getValue(name));
+            Object value = null;
+            try {
+                value = toJsonValue(prop.getReadMethod().invoke(bean));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
             if (value != null) {
                 buffer.put(name, value);
             }
