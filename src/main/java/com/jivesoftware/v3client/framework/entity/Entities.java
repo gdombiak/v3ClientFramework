@@ -133,9 +133,7 @@ public class Entities<TYPE> implements Iterable<TYPE> {
         if (link == null) {
             throw new NoSuchElementException();
         }
-        HttpTransport.Request request = jiveClient.buildRequest(new EndpointDef(URI.create(link)),
-                                                                NameValuePair.EMPTY,
-                                                                null);
+        HttpTransport.Request request = jiveClient.buildGetRequest(URI.create(link));
         Iterable<TYPE> entities = jiveClient.executeImpl(request).getEntities(typeLibrary);
         return (Entities<TYPE>)entities;
     }
@@ -145,9 +143,7 @@ public class Entities<TYPE> implements Iterable<TYPE> {
         if (link == null) {
             throw new NoSuchElementException();
         }
-        HttpTransport.Request request = jiveClient.buildRequest(new EndpointDef(URI.create(link)),
-                                                                NameValuePair.EMPTY,
-                                                                null);
+        HttpTransport.Request request = jiveClient.buildGetRequest(URI.create(link));
         Iterable<TYPE> entities = jiveClient.executeImpl(request).getEntities(typeLibrary);
         return (Entities<TYPE>)entities;
     }

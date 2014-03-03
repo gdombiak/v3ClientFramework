@@ -1,5 +1,6 @@
 package com.jivesoftware.v3client.framework.type;
 
+import com.jivesoftware.v3client.framework.entity.AbstractEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.BeanWrapper;
@@ -13,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by ed.venaglia on 3/1/14.
  */
 public class DataWriter {
+
+    public static final DataWriter INSTANCE = new DataWriter();
 
     private static final Map<Class<?>,JsonConverter<?,?>> CONVERTER_MAP = new ConcurrentHashMap<>();
 
@@ -33,6 +36,30 @@ public class DataWriter {
             @Override
             public String convert(Date obj) {
                 return CoreApiDateFormat.DATE_FORMAT.get().format(obj);
+            }
+        });
+        addConverter0(AbstractEntity.class, new JsonConverter<AbstractEntity, JSONObject>() {
+            @Override
+            public JSONObject convert(AbstractEntity obj) {
+                JSONObject buffer = new JSONObject();
+                INSTANCE.writeDataBean(obj, buffer);
+                return buffer;
+            }
+        });
+        addConverter0(Collection.class, new JsonConverter<Collection, JSONArray>() {
+            @Override
+            public JSONArray convert(Collection obj) {
+                JSONArray buffer = new JSONArray();
+                INSTANCE.writeDataBeans(obj, buffer);
+                return buffer;
+            }
+        });
+        addConverter0(Object[].class, new JsonConverter<Object[], JSONArray>() {
+            @Override
+            public JSONArray convert(Object[] obj) {
+                JSONArray buffer = new JSONArray();
+                INSTANCE.writeDataBeans(Arrays.asList(obj), buffer);
+                return buffer;
             }
         });
     }

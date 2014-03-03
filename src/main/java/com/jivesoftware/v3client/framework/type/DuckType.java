@@ -104,8 +104,7 @@ public class DuckType {
                 return QuacksLike.DATA_WRAPPER;
             }
         }
-        if (object.opt("actor") instanceof JSONObject &&
-            object.opt("provider") instanceof JSONObject &&
+        if (object.opt("provider") instanceof JSONObject &&
             object.opt("verb") instanceof String) {
             entityType = "activity";
             return QuacksLike.ENTITY;

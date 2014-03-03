@@ -5,9 +5,16 @@ import com.jivesoftware.v3client.framework.entity.AbstractEntity;
 import com.jivesoftware.v3client.framework.http.EndpointDef;
 import com.jivesoftware.v3client.framework.http.HttpRequestImpl;
 import com.jivesoftware.v3client.framework.http.HttpTransport;
+import com.jivesoftware.v3client.framework.type.DataWriter;
 import org.apache.http.Header;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.auth.BasicScheme;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.util.Collections;
 
 /**
  * <p>The real JiveClient object extends this class (to implement static methods), and is generated from
@@ -48,11 +55,49 @@ public abstract class AbstractJiveClient {
                 request.addQueryParam(queryParam.getName(), queryParam.getValue());
             }
         }
-        // TODO - deal with body conversion from entities that are not strings
         if (entity != null) {
-            request.addBody(entity.toString());
+            JSONObject object = new JSONObject();
+            DataWriter.INSTANCE.writeDataBean(entity, object);
+            request.addBody(object.toString(4));
         }
         return request;
+    }
+
+    /**
+     * @param uri An absolute service path
+     * @return The request object
+     */
+    public HttpTransport.Request buildGetRequest(URI uri) {
+        Iterable<NameValuePair> queryParams;
+        if (uri.getRawQuery() == null) {
+            queryParams = Collections.emptyList();
+        } else {
+            queryParams = NameValuePair.many();
+            for (String param : uri.getRawQuery().split("&")) {
+                String[] split = param.split("=", 2);
+                String name = decode(split[0]);
+                String value = decode(split[1]);
+                ((NameValuePair.Builder)queryParams).add(name, value);
+            }
+        }
+        HttpTransport.Request request = (new HttpRequestImpl())
+                .addHeader(httpCredentials.getName(), httpCredentials.getValue())
+                .addMethod(HttpTransport.Method.GET)
+                .addUri(resolveUri(uri.getPath()));
+        if (queryParams != null) {
+            for (NameValuePair queryParam : queryParams) {
+                request.addQueryParam(queryParam.getName(), queryParam.getValue());
+            }
+        }
+        return request;
+    }
+
+    private String decode(String s) {
+        try {
+            return URLDecoder.decode(s, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // TODO - for now, only basic auth is supported
@@ -79,7 +124,10 @@ public abstract class AbstractJiveClient {
     }
 
     private String resolveUri(EndpointDef endpointDef, Iterable<NameValuePair> parameters) {
-        String uri = endpointDef.getPath(parameters);
+        return resolveUri(endpointDef.getPath(parameters));
+    }
+
+    private String resolveUri(String uri) {
         if (uri.startsWith("/")) {
             uri = jiveURL + uri;
         }
@@ -87,7 +135,13 @@ public abstract class AbstractJiveClient {
     }
 
     public HttpTransport.Response executeImpl(HttpTransport.Request request) {
-        return transport.execute(request);
+        AbstractJiveClient prev = JIVE_CLIENT.get();
+        try {
+            JIVE_CLIENT.set(this);
+            return transport.execute(request);
+        } finally {
+            JIVE_CLIENT.set(prev);
+        }
     }
 
     protected static String[] queryParams(String... params) {

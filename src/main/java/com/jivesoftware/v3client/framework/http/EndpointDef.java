@@ -23,6 +23,7 @@ public class EndpointDef {
     private EntityType<?> bodyType;
     private boolean bodyTypeResolved;
     private final Iterable<NameValuePair> overrides;
+    private final Set<String> overriddenNames;
     private final boolean formatExtraParamsAsFilters;
 
     /**
@@ -42,6 +43,7 @@ public class EndpointDef {
         this.bodyTypeName = bodyTypeName;
         this.bodyTypeResolved = bodyTypeName != null && !bodyTypeName.equals("void");
         this.overrides = overrides;
+        this.overriddenNames = extactNames(overrides);
         this.pathParams = extractPathParams(path);
         this.queryParams = (queryParams != null) ? new LinkedHashSet<>(Arrays.asList(queryParams)) : new LinkedHashSet<String>();
         this.formatExtraParamsAsFilters = this.queryParams.contains("filter");
@@ -50,43 +52,12 @@ public class EndpointDef {
         }
     }
 
-    /**
-     * Builds an EndpointDef for performing simple gets, where query params are implicitly overridden from a URI
-     * @param uri The URL to invoke
-     */
-    public EndpointDef(URI uri) {
-        this.method = HttpTransport.Method.GET;
-        this.path = uri.getPath();
-        this.bodyTypeName = null;
-        this.bodyTypeResolved = true;
-        this.pathParams = Collections.emptySet();
-        if (uri.getRawQuery() == null) {
-            this.overrides = Collections.emptySet();
-            this.queryParams = Collections.emptySet();
-        } else {
-            NameValuePair.Builder overrides = NameValuePair.many();
-            this.overrides = overrides;
-            this.queryParams = new LinkedHashSet<>();
-            for (String param : uri.getRawQuery().split("&")) {
-                String[] split = param.split("=", 2);
-                String name = decode(split[0]);
-                String value = decode(split[1]);
-                overrides.add(name, value);
-                queryParams.add(name);
-            }
+    private Set<String> extactNames(Iterable<NameValuePair> overrides) {
+        if (overrides == null || overrides == Collections.EMPTY_LIST) {
+            return Collections.emptySet();
         }
-        this.formatExtraParamsAsFilters = this.queryParams.contains("filter");
-        if (this.formatExtraParamsAsFilters) {
-            this.queryParams.remove("filter");
-        }
-    }
-
-    private String decode(String s) {
-        try {
-            return URLDecoder.decode(s, "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        Set<String> names = new HashSet<>();
+        return names;
     }
 
     private Set<String> extractPathParams(String path) {
@@ -100,10 +71,6 @@ public class EndpointDef {
         return pathParams;
     }
 
-    public Iterable<NameValuePair> resolveOverrides(Object thisEntity, Object bodyEntity) {
-        return overrides; // todo some overrides have values that need special interpretation, see @ParamOverride
-    }
-
     public HttpTransport.Method getMethod() {
         return method;
     }
@@ -111,16 +78,46 @@ public class EndpointDef {
     public Iterable<NameValuePair> getQueryParams(Iterable<NameValuePair> allParameters) {
         NameValuePair.Builder queryParams = NameValuePair.many();
         for (NameValuePair pair : allParameters) {
-            if (!this.queryParams.contains(pair.getName())) {
+            if (overriddenNames.contains(pair.getName())) {
                 continue;
             }
-            try {
-                queryParams.add(pair.getName(), URLEncoder.encode(pair.getValue(), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                // Can not happen
+            if (this.queryParams.contains(pair.getName())) {
+                try {
+                    queryParams.add(pair.getName(), URLEncoder.encode(pair.getValue(), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    // Can not happen
+                }
+            }
+            else if (formatExtraParamsAsFilters) {
+                try {
+                    String filter = String.format("%s(%s)", pair.getName(), pair.getValue());
+                    String filterEncoded = URLEncoder.encode(filter, "UTF-8");
+                    queryParams.add("filter", filterEncoded);
+                } catch (UnsupportedEncodingException e) {
+                    // Can not happen
+                }
             }
         }
-        // TODO - convert filter params ???
+        if (overrides != null) {
+            for (NameValuePair pair : overrides) {
+                if (this.queryParams.contains(pair.getName())) {
+                    try {
+                        queryParams.add(pair.getName(), URLEncoder.encode(pair.getValue(), "UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                        // Can not happen
+                    }
+                }
+                else if (formatExtraParamsAsFilters) {
+                    try {
+                        String filter = String.format("%s(%s)", pair.getName(), pair.getValue());
+                        String filterEncoded = URLEncoder.encode(filter, "UTF-8");
+                        queryParams.add("filter", filterEncoded);
+                    } catch (UnsupportedEncodingException e) {
+                        // Can not happen
+                    }
+                }
+            }
+        }
         return queryParams;
     }
 
